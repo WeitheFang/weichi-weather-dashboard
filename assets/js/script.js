@@ -1,5 +1,6 @@
 var searchBtn = $(`#search-btn`);
 var APIKey = "090e3cee2f136086f9deb58ee30228fb";
+var searchHistoryList = [];
 // var fetchUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${APIkey}`;
 
 searchBtn.on(`click`, searchCity);
@@ -9,21 +10,21 @@ searchBtn.on(`click`, searchCity);
 // THEN I am presented with current and future conditions for that city and that city is added to the search history
 function searchCity() {
   var cityName = $(this).siblings(`.form-control`).val();
-  var cityList = {
-    city: cityName,
-  };
-  localStorage.setItem(`cityList`, JSON.stringify(cityList));
+
+  searchHistoryList.push(cityName);
+  localStorage.setItem(`city`, JSON.stringify(searchHistoryList));
   console.log(localStorage);
 }
 
 function searchHistory() {
-  var cityName = JSON.parse(localStorage.getItem(`cityList`));
+  var cityName = JSON.parse(localStorage.getItem(`city`));
 
   for (i = 0; i < cityName.length; i++) {
     var create = $("<button>");
-    create.attr("class", "btn btn-outline-secondary");
+    create.attr("class", "btn btn-outline-secondary btn-lg ");
     create.attr("type", "button");
     create.text(cityName[i]);
+    console.log(create);
     $(`#search-history`).append(create);
   }
 }
