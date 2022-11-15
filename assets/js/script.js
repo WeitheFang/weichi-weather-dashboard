@@ -22,19 +22,36 @@ function searchCity(event) {
 
   cityWeather(cityName);
   SaveLocal(cityName);
+  searchHistory(cityName);
 }
 
 function searchHistory(cityName) {
   var newList = $(`<li>`);
   var create = $("<button>");
-  create.attr("class", "btn btn-outline-secondary btn-lg my-1");
+  create.attr("class", "btn btn-outline-secondary btn-lg  my-1");
+
   create.attr("id", "cityBtn");
   create.text(cityName);
   newList.append(create);
   $(`#search-history`).prepend(newList);
+  $(`#cityBtn`).on(`click`, function () {
+    var btnRequest = $(this).text();
+    cityWeather(btnRequest);
+  });
 }
 
-function cityWeather() {}
+function cityWeather(cityName) {
+  var weatherAPI =
+    `https://api.openweathermap.org/data/2.5/weather?q=` +
+    cityName +
+    `&appid=` +
+    APIKey;
+
+  fetch(weatherAPI, {}).then(function (response) {
+    console.log(response);
+  });
+}
+
 function SaveLocal() {}
 // WHEN I view current weather conditions for that city
 // THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the the wind speed
