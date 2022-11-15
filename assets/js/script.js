@@ -2,8 +2,7 @@ var searchBtn = $(`#search-btn`);
 var clearHistory = $(`#clear-history`);
 var APIKey = "090e3cee2f136086f9deb58ee30228fb";
 var cityName = "";
-// var forecastAPI = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIkey}`;
-// var locationAPI =`http://api.openweathermap.org/geo/1.0/direct?q=` +cityName +`&limit=5&appid=` +APIKey;
+var currentDay = dayjs().format("MM/DD/YYYY");
 
 searchBtn.on(`click`, searchCity);
 clearHistory.on(`click`, clearSearchHistory);
@@ -25,6 +24,8 @@ function searchCity(event) {
   searchHistory(cityName);
 }
 
+// WHEN I click on a city in the search history
+// THEN I am again presented with current and future conditions for that city
 function searchHistory(cityName) {
   var newList = $(`<li>`);
   var create = $("<button>");
@@ -40,6 +41,8 @@ function searchHistory(cityName) {
   });
 }
 
+// WHEN I view current weather conditions for that city
+// THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the the wind speed
 function cityWeather(cityName) {
   var weatherAPI =
     `https://api.openweathermap.org/data/2.5/weather?q=` +
@@ -47,20 +50,58 @@ function cityWeather(cityName) {
     `&appid=` +
     APIKey;
 
-  fetch(weatherAPI, {}).then(function (response) {
-    console.log(response);
-  });
-}
+  fetch(weatherAPI, {})
+    .then(function (response) {
+      //   console.log(response);
+      return response.json();
+    })
+    .then(function (data) {
+      console.log(data);
+      var cityInfo = $(`<div col-12>`).append(
+        $(`<h2>` + data.name + ` ` + currentDay + `</h2>`)
+      );
+      var tempCelsius = Math.round(data.main.temp - 273.15);
+      var temperature = $(`<p>`).append(`Temperature: ` + tempCelsius + ` °C`);
+      var wind = $(`<p>`).append(`Wind: ` + data.wind.speed + ` m/s`);
+      var humidity = $(`<p>`).append(`Humidity: ` + data.main.humidity + ` %`);
+      var weatherIcon = $(`<image class="rounded mx-auto d-block">`).attr(
+        `src`,
+        `http://openweathermap.org/img/wn/` + data.weather[0].icon + `@2x.png`
+      );
+      var latAndLon = `lat=` + data.coord.lat + `&lon=` + data.coord.lon;
+      cityInfo
+        .append(weatherIcon)
+        .append(temperature)
+        .append(wind)
+        .append(humidity);
+      cityForecast(latAndLon);
 
-function SaveLocal() {}
-// WHEN I view current weather conditions for that city
-// THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, and the the wind speed
+      $(`#targetCity`).empty();
+      $(`#targetCity`).append(cityInfo);
+    });
+}
 
 // WHEN I view future weather conditions for that city
 // THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, the wind speed, and the humidity
+function cityForecast(latAndLon) {
+  var forecastAPI =
+    `https://api.openweathermap.org/data/2.5/forecast?` +
+    latAndLon +
+    `&appid=` +
+    APIKey;
 
-// WHEN I click on a city in the search history
-// THEN I am again presented with current and future conditions for that city
+  fetch(forecastAPI, {})
+    .then(function (response) {
+      //   console.log(response);
+      return response.json();
+    })
+    .then(function (data) {
+      console.log(data);
+    });
+}
+
+function SaveLocal() {}
+
 function clearSearchHistory() {
   $(`#search-history`).empty();
 }
