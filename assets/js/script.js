@@ -7,6 +7,14 @@ var currentDay = dayjs().format("MM/DD/YYYY");
 searchBtn.on(`click`, searchCity);
 clearHistory.on(`click`, clearSearchHistory);
 
+// Add an event listener fot enter
+$(`#city-name`).on(`keypress`, function (event) {
+  if (event.key === "Enter") {
+    // console.log(`enter`);
+    event.preventDefault();
+    searchBtn.click();
+  }
+});
 // GIVEN a weather dashboard with form inputs
 // WHEN I search for a city
 // THEN I am presented with current and future conditions for that city and that city is added to the search history
@@ -102,8 +110,8 @@ function cityForecast(latAndLon) {
       for (var i = 0; i < data.list.length; i++) {
         if (data.list[i].dt_txt.split(" ")[1] === `12:00:00`) {
           console.log(data.list[i].dt_txt.split(" ")[1]);
-          var cityInfo = $(`<div >`);
-          cityInfo.addClass("bg-light text-dark ml-3 mb-3 rounded");
+          var cityInfo = $(`<div>`);
+          cityInfo.addClass("col-2 bg-light text-dark");
           var date = $(`<h3>`).append(data.list[i].dt_txt.split(" ")[0]);
 
           var tempCelsius = Math.round(data.list[i].main.temp - 273.15);
