@@ -20,7 +20,7 @@ function searchCity(event) {
   console.log(cityName);
 
   cityWeather(cityName);
-  SaveLocal(cityName);
+  SaveLocally(cityName);
   searchHistory(cityName);
 }
 
@@ -74,6 +74,7 @@ function cityWeather(cityName) {
         .append(temperature)
         .append(wind)
         .append(humidity);
+
       cityForecast(latAndLon);
 
       $(`#targetCity`).empty();
@@ -97,12 +98,45 @@ function cityForecast(latAndLon) {
     })
     .then(function (data) {
       console.log(data);
+      //   console.log(data.list[11].dt_txt.split(" ")[1]);
+      for (var i = 0; i < data.list.length; i++) {
+        if (data.list[i].dt_txt.split(" ")[1] === `12:00:00`) {
+          console.log(data.list[i].dt_txt.split(" ")[1]);
+          var cityInfo = $(`<div >`);
+          cityInfo.addClass("bg-light text-dark ml-3 mb-3 rounded");
+          var date = $(`<h3>`).append(data.list[i].dt_txt.split(" ")[0]);
+
+          var tempCelsius = Math.round(data.list[i].main.temp - 273.15);
+          var temperature = $(`<p>`).append(
+            `Temperature: ` + tempCelsius + ` °C`
+          );
+          var wind = $(`<p>`).append(
+            `Wind: ` + data.list[i].wind.speed + ` m/s`
+          );
+          var humidity = $(`<p>`).append(
+            `Humidity: ` + data.list[i].main.humidity + ` %`
+          );
+          var weatherIcon = $(`<image class="rounded mx-auto d-block">`).attr(
+            `src`,
+            `http://openweathermap.org/img/wn/` +
+              data.list[i].weather[0].icon +
+              `@2x.png`
+          );
+          cityInfo
+            .append(date)
+            .append(weatherIcon)
+            .append(temperature)
+            .append(wind)
+            .append(humidity);
+          $(`#infoCity`).empty();
+          $(`#infoCity`).append(cityInfo);
+        }
+      }
     });
 }
 
-function SaveLocal() {}
+function SaveLocally() {}
 
 function clearSearchHistory() {
   $(`#search-history`).empty();
 }
-searchHistory();
