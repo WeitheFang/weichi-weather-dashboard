@@ -3,6 +3,7 @@ var clearHistory = $(`#clear-history`);
 var APIKey = "090e3cee2f136086f9deb58ee30228fb";
 var cityName = "";
 var currentDay = dayjs().format("YYYY-MM-DD");
+var cityNameList = [];
 
 searchBtn.on(`click`, searchCity);
 clearHistory.on(`click`, clearSearchHistory);
@@ -15,6 +16,18 @@ $(`#city-name`).on(`keypress`, function (event) {
     searchBtn.click();
   }
 });
+
+//Add a function to make sure the first letter always capital
+$(`#city-name`).on("change keydown paste", function (e) {
+  if ((this.value.length = 1)) {
+  }
+  var cityName = $(this).val();
+  capCityName = cityName.toLowerCase().replace(/\b[a-z]/g, function (char) {
+    return char.toUpperCase();
+  });
+  $(this).val(capCityName);
+});
+
 // GIVEN a weather dashboard with form inputs
 // WHEN I search for a city
 // THEN I am presented with current and future conditions for that city and that city is added to the search history
@@ -22,14 +35,19 @@ function searchCity(event) {
   event.preventDefault();
 
   cityName = $(`#city-name`).val();
-  if (cityName === "") {
+  if (cityName === "" || isNaN(cityName) === false) {
     return window.alert(`Please input a city name!`);
   }
+
+  if (cityNameList.includes(cityName)) {
+    return window.alert(`This city has been added to the search history`);
+  }
+  cityNameList.push(cityName);
+
   console.log(cityName);
 
   cityWeather(cityName);
   SaveLocally(cityName);
-  searchHistory(cityName);
 }
 
 // WHEN I click on a city in the search history
@@ -64,7 +82,12 @@ function cityWeather(cityName) {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
+      // console.log(data);
+      // console.log(data.cod);
+      if (data.cod === `404`) {
+        window.alert(data.message);
+        return;
+      }
       var cityInfo = $(`<div col-12>`).append(
         $(`<h2>` + data.name + ` ` + currentDay + `</h2>`)
       );
@@ -88,6 +111,7 @@ function cityWeather(cityName) {
       $(`#targetCity`).empty();
       $(`#infoCity`).empty();
       $(`#targetCity`).append(cityInfo);
+      searchHistory(cityName);
     });
 }
 
@@ -144,8 +168,9 @@ function cityForecast(latAndLon) {
     });
 }
 
-function SaveLocally() {}
+function SaveLocally(cityName) {}
 
 function clearSearchHistory() {
   $(`#search-history`).empty();
+  cityNameList.empty();
 }
