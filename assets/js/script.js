@@ -46,9 +46,6 @@ function searchCity(event) {
 
   console.log(cityName);
 
-  cityNameList.push(cityName);
-
-  localStorage.setItem(`city-name`, JSON.stringify(cityNameList));
   cityWeather(cityName);
 }
 
@@ -57,8 +54,8 @@ function searchCity(event) {
 function searchHistory(cityName) {
   var newList = $(`<li>`);
   var create = $("<button>");
-  create.attr("class", "btn btn-outline-secondary btn-lg  my-1");
 
+  create.attr("class", "btn btn-outline-secondary btn-lg  my-1");
   create.attr("id", "cityBtn");
   create.text(cityName);
   newList.append(create);
@@ -90,6 +87,9 @@ function cityWeather(cityName) {
         window.alert(data.message);
         return;
       }
+      cityNameList.push(cityName);
+      localStorage.setItem(`city-name`, JSON.stringify(cityNameList));
+
       var cityInfo = $(`<div col-12>`).append(
         $(`<h2>` + data.name + ` ` + currentDay + `</h2>`)
       );
@@ -175,6 +175,7 @@ function clearSearchHistory() {
   $(`#search-history`).empty();
   cityNameList.empty();
   localStorage.clear();
+  console.log(localStorage);
 }
 
 // print localstorage city name to the search History
