@@ -6,6 +6,8 @@ var currentDay = dayjs().format("YYYY-MM-DD");
 var cityNameList = [];
 
 searchBtn.on(`click`, searchCity);
+searchBtn.on(`click`, SaveLocally);
+
 clearHistory.on(`click`, clearSearchHistory);
 
 // Add an event listener fot enter
@@ -45,9 +47,11 @@ function searchCity(event) {
   cityNameList.push(cityName);
 
   console.log(cityName);
-
+  var cityNameStored = {
+    Name: cityName,
+  };
+  localStorage.setItem(`city-name`, JSON.stringify(cityNameStored));
   cityWeather(cityName);
-  SaveLocally(cityName);
 }
 
 // WHEN I click on a city in the search history
@@ -168,9 +172,13 @@ function cityForecast(latAndLon) {
     });
 }
 
+//save user input to local storage
+
 function SaveLocally(cityName) {}
 
+// clear the search history
 function clearSearchHistory() {
   $(`#search-history`).empty();
   cityNameList.empty();
+  localStorage.clear();
 }
