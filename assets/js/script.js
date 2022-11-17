@@ -3,10 +3,9 @@ var clearHistory = $(`#clear-history`);
 var APIKey = "090e3cee2f136086f9deb58ee30228fb";
 var cityName = "";
 var currentDay = dayjs().format("YYYY-MM-DD");
-var cityNameList = [];
+var cityNameList = JSON.parse(localStorage.getItem("city-name")) || [];
 
 searchBtn.on(`click`, searchCity);
-searchBtn.on(`click`, SaveLocally);
 
 clearHistory.on(`click`, clearSearchHistory);
 
@@ -44,13 +43,12 @@ function searchCity(event) {
   if (cityNameList.includes(cityName)) {
     return window.alert(`This city has been added to the search history`);
   }
-  cityNameList.push(cityName);
 
   console.log(cityName);
-  var cityNameStored = {
-    Name: cityName,
-  };
-  localStorage.setItem(`city-name`, JSON.stringify(cityNameStored));
+
+  cityNameList.push(cityName);
+
+  localStorage.setItem(`city-name`, JSON.stringify(cityNameList));
   cityWeather(cityName);
 }
 
@@ -172,13 +170,14 @@ function cityForecast(latAndLon) {
     });
 }
 
-//save user input to local storage
-
-function SaveLocally(cityName) {}
-
 // clear the search history
 function clearSearchHistory() {
   $(`#search-history`).empty();
   cityNameList.empty();
   localStorage.clear();
+}
+
+// print localstorage city name to the search History
+for (let i = 0; i < cityNameList.length; i++) {
+  searchHistory(cityNameList[i]);
 }
