@@ -2,7 +2,7 @@ var searchBtn = $(`#search-btn`);
 var clearHistory = $(`#clear-history`);
 var APIKey = "090e3cee2f136086f9deb58ee30228fb";
 var cityName = "";
-var currentDay = dayjs().format("MM/DD/YYYY");
+var currentDay = dayjs().format("YYYY-MM-DD");
 
 searchBtn.on(`click`, searchCity);
 clearHistory.on(`click`, clearSearchHistory);
@@ -86,6 +86,7 @@ function cityWeather(cityName) {
       cityForecast(latAndLon);
 
       $(`#targetCity`).empty();
+      $(`#infoCity`).empty();
       $(`#targetCity`).append(cityInfo);
     });
 }
@@ -136,7 +137,7 @@ function cityForecast(latAndLon) {
             .append(temperature)
             .append(wind)
             .append(humidity);
-          $(`#infoCity`).empty();
+
           $(`#infoCity`).append(cityInfo);
         }
       }
