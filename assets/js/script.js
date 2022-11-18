@@ -175,10 +175,9 @@ function cityForecast(latAndLon) {
 
 // clear the search history
 function clearSearchHistory() {
+  localStorage.clear();
   $(`#search-history`).empty();
   cityNameList.empty();
-  localStorage.clear();
-  console.log(localStorage);
 }
 
 // print localstorage city name to the search History
