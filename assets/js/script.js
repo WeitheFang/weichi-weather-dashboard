@@ -6,8 +6,8 @@ var currentDay = dayjs().format("YYYY-MM-DD");
 var cityNameList = JSON.parse(localStorage.getItem("city-name")) || [];
 
 searchBtn.on(`click`, searchCity);
-
 clearHistory.on(`click`, clearSearchHistory);
+$(`#cityBtn`).on(`click`, cityBtnClick);
 
 // Add an event listener fot enter
 $(`#city-name`).on(`keypress`, function (event) {
@@ -60,10 +60,13 @@ function searchHistory(cityName) {
   create.text(cityName);
   newList.append(create);
   $(`#search-history`).prepend(newList);
-  $(`#cityBtn`).on(`click`, function () {
-    var btnRequest = $(this).text();
-    cityWeather(btnRequest);
-  });
+}
+
+//Create a function for search history btn
+function cityBtnClick() {
+  console.log(`click`);
+  var btnRequest = $(this).text();
+  cityWeather(btnRequest);
 }
 
 // WHEN I view current weather conditions for that city
