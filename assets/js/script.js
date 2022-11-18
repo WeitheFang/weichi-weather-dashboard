@@ -46,7 +46,6 @@ function searchCity(event) {
   console.log(cityName);
 
   cityWeather(cityName);
-  searchHistory(cityName);
   $(`#city-name`).val("");
 }
 
@@ -60,12 +59,55 @@ function searchHistory(cityName) {
   create.attr("id", "cityBtn");
   create.text(cityName);
   newList.append(create);
-  create.on(`click`, function () {
-    console.log(`click`);
-    var btnRequest = $(this).text();
-    cityWeather(btnRequest);
-  });
+  create.on(`click`, searchHistoryBtn);
   $(`#search-history`).prepend(newList);
+}
+
+//api function for history btn
+
+function searchHistoryBtn() {
+  console.log(`click`);
+  var btnRequest = $(this).text();
+  var weatherAPI =
+    `https://api.openweathermap.org/data/2.5/weather?q=` +
+    btnRequest +
+    `&appid=` +
+    APIKey;
+
+  fetch(weatherAPI, {})
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      if (data.cod === `404`) {
+        window.alert(data.message);
+        return;
+      }
+
+      var cityInfo = $(`<div col-12>`).append(
+        $(`<h2>` + data.name + ` ` + currentDay + `</h2>`)
+      );
+      var tempCelsius = Math.round(data.main.temp - 273.15);
+      var temperature = $(`<p>`).append(`Temperature: ` + tempCelsius + ` °C`);
+      var wind = $(`<p>`).append(`Wind: ` + data.wind.speed + ` m/s`);
+      var humidity = $(`<p>`).append(`Humidity: ` + data.main.humidity + ` %`);
+      var weatherIcon = $(`<image class="rounded mx-auto d-block">`).attr(
+        `src`,
+        `http://openweathermap.org/img/wn/` + data.weather[0].icon + `@2x.png`
+      );
+      var latAndLon = `lat=` + data.coord.lat + `&lon=` + data.coord.lon;
+      cityInfo
+        .append(weatherIcon)
+        .append(temperature)
+        .append(wind)
+        .append(humidity);
+
+      cityForecast(latAndLon);
+
+      $(`#targetCity`).empty();
+      $(`#infoCity`).empty();
+      $(`#targetCity`).append(cityInfo);
+    });
 }
 
 // WHEN I view current weather conditions for that city
@@ -111,6 +153,7 @@ function cityWeather(cityName) {
         .append(humidity);
 
       cityForecast(latAndLon);
+      searchHistory(cityName);
 
       $(`#targetCity`).empty();
       $(`#infoCity`).empty();
