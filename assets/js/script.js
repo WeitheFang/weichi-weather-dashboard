@@ -7,7 +7,6 @@ var cityNameList = JSON.parse(localStorage.getItem("city-name")) || [];
 
 searchBtn.on(`click`, searchCity);
 clearHistory.on(`click`, clearSearchHistory);
-$(`#cityBtn`).on(`click`, cityBtnClick);
 
 // Add an event listener fot enter
 $(`#city-name`).on(`keypress`, function (event) {
@@ -47,6 +46,8 @@ function searchCity(event) {
   console.log(cityName);
 
   cityWeather(cityName);
+  searchHistory(cityName);
+  $(`#city-name`).val("");
 }
 
 // WHEN I click on a city in the search history
@@ -59,14 +60,12 @@ function searchHistory(cityName) {
   create.attr("id", "cityBtn");
   create.text(cityName);
   newList.append(create);
+  create.on(`click`, function () {
+    console.log(`click`);
+    var btnRequest = $(this).text();
+    cityWeather(btnRequest);
+  });
   $(`#search-history`).prepend(newList);
-}
-
-//Create a function for search history btn
-function cityBtnClick() {
-  console.log(`click`);
-  var btnRequest = $(this).text();
-  cityWeather(btnRequest);
 }
 
 // WHEN I view current weather conditions for that city
@@ -116,7 +115,6 @@ function cityWeather(cityName) {
       $(`#targetCity`).empty();
       $(`#infoCity`).empty();
       $(`#targetCity`).append(cityInfo);
-      searchHistory(cityName);
     });
 }
 
@@ -175,9 +173,11 @@ function cityForecast(latAndLon) {
 
 // clear the search history
 function clearSearchHistory() {
+  window.location.reload();
   localStorage.clear();
   $(`#search-history`).empty();
   cityNameList.empty();
+  window.location.reload();
 }
 
 // print localstorage city name to the search History
